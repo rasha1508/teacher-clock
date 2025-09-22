@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeless Clock</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Lato', sans-serif;
+            padding: 20px;
+            background: transparent;
+        }
+        
+        .clock-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .clock-widget {
+            width: 100%;
+            height: 100%;
+            background: #F5F5DC; /* Beige background */
+            border-radius: 50%;
+            box-shadow: 
+                0 8px 20px rgba(77, 53, 46, 0.12),
+                0 0 0 10px rgba(255, 255, 255, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .clock-face {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .clock-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            background: #4D352E;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+        }
+        
+        .hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 10px;
+        }
+        
+        .hour-hand {
+            width: 8px;
+            height: 80px;
+            background: #4D352E;
+            margin-left: -4px;
+            margin-top: -80px;
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        
+        .minute-hand {
+            width: 6px;
+            height: 110px;
+            background: #4D352E;
+            margin-left: -3px;
+            margin-top: -110px;
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        
+        .second-hand {
+            width: 2px;
+            height: 120px;
+            background: #DA7E54; /* Orange second hand */
+            margin-left: -1px;
+            margin-top: -120px;
+            border-radius: 1px 1px 0 0;
+        }
+        
+        .clock-number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #4D352E;
+        }
+        
+        .clock-number span {
+            display: inline-block;
+            font-size: 24px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Position only 12, 3, 6, 9 numbers */
+        .clock-number span:nth-child(1) { top: 15px; } /* 12 */
+        .clock-number span:nth-child(2) { top: 50%; right: 10px; transform: translateY(-50%); left: auto; } /* 3 */
+        .clock-number span:nth-child(3) { bottom: 15px; } /* 6 */
+        .clock-number span:nth-child(4) { top: 50%; left: 10px; transform: translateY(-50%); } /* 9 */
+        
+        .brand {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            color: #4D352E;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+        
+        .clock-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: inset 0 0 10px rgba(77, 53, 46, 0.1);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="clock-widget">
+            <div class="clock-face">
+                <div class="clock-number">
+                    <span>12</span>
+                    <span>3</span>
+                    <span>6</span>
+                    <span>9</span>
+                </div>
+                
+                <div class="hand hour-hand" id="hour-hand"></div>
+                <div class="hand minute-hand" id="minute-hand"></div>
+                <div class="hand second-hand" id="second-hand"></div>
+                
+                <div class="clock-center"></div>
+                
+                <div class="brand">TIMELESS</div>
+                
+                <div class="clock-border"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Calculate rotation angles
+            const hourDeg = (hours % 12) * 30 + minutes * 0.5;
+            const minuteDeg = minutes * 6 + seconds * 0.1;
+            const secondDeg = seconds * 6;
+            
+            // Apply rotations
+            document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
+            document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
+            document.getElementById('second-hand').style.transform = `rotate(${secondDeg}deg)`;
+        }
+        
+        // Initialize clock
+        updateClock();
+        
+        // Update every second
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
